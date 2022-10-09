@@ -1,0 +1,11 @@
+.auth__text {
+	margin-top: 15px;
+	color: white;
+	text-align: center;
+}
+
+@media screen and (max-width: 670px) {
+	.auth__text {
+		margin-top: 20px;
+	}
+}
