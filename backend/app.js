@@ -13,6 +13,7 @@ const { login, createUser } = require('./controllers/users');
 const { auth } = require('./middlewares/auth');
 const getDefaultError = require('./middlewares/getDefaultError');
 const NotFound = require('./errors/NotFound');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
 
@@ -22,6 +23,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(requestLogger); // подключаем логгер запросов
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -51,8 +53,9 @@ app.use('*', (req, res, next) => {
   next(new NotFound('Страница не найдена'));
 });
 
-app.use(errors());
-app.use(getDefaultError);
+app.use(errorLogger); // подключаем логгер ошибок
+app.use(errors()); // обработчик ошибок celebrate
+app.use(getDefaultError); // централизованный обработчик ошибок
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
