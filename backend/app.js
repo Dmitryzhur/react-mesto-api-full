@@ -11,6 +11,7 @@ const routesCards = require('./routes/cards');
 const routesUser = require('./routes/users');
 const { login, createUser } = require('./controllers/users');
 const { auth } = require('./middlewares/auth');
+const { cors } = require('./middlewares/cors');
 const getDefaultError = require('./middlewares/getDefaultError');
 const NotFound = require('./errors/NotFound');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -20,6 +21,8 @@ const app = express();
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
 });
+
+app.use(cors);
 
 app.use(bodyParser.json());
 app.use(cookieParser());
