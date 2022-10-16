@@ -2,12 +2,14 @@ class Api {
 	constructor(options) {
 		this._baseURL = options.baseUrl;
 		this._headers = options.headers;
+		this._credentials = options.credentials;
 	}
 
 	getCards() {
 		return fetch(`${this._baseURL}/cards`, {
 			method: 'GET',
 			headers: this._headers,
+			credentials: this._credentials,
 		})
 			.then(this._checkResponseStatus)
 	}
@@ -16,6 +18,7 @@ class Api {
 		return fetch(`${this._baseURL}/users/me`, {
 			method: 'GET',
 			headers: this._headers,
+			credentials: this._credentials,
 		})
 			.then(this._checkResponseStatus)
 	}
@@ -24,6 +27,7 @@ class Api {
 		return fetch(`${this._baseURL}/users/me`, {
 			method: 'PATCH',
 			headers: this._headers,
+			credentials: this._credentials,
 			body: JSON.stringify(data)
 		},
 		)
@@ -34,6 +38,7 @@ class Api {
 		return fetch(`${this._baseURL}/cards`, {
 			method: 'POST',
 			headers: this._headers,
+			credentials: this._credentials,
 			body: JSON.stringify(data)
 		})
 			.then(this._checkResponseStatus)
@@ -43,6 +48,7 @@ class Api {
 		return fetch(`${this._baseURL}/cards/${_id}`, {
 			method: 'DELETE',
 			headers: this._headers,
+			credentials: this._credentials,
 		})
 			.then(this._checkResponseStatus)
 	}
@@ -52,12 +58,14 @@ class Api {
 			return fetch(`${this._baseURL}/cards/${_id}/likes`, {
 				method: 'PUT',
 				headers: this._headers,
+				credentials: this._credentials,
 			})
 				.then(this._checkResponseStatus)
 		} else {
 			return fetch(`${this._baseURL}/cards/${_id}/likes`, {
 				method: 'DELETE',
 				headers: this._headers,
+				credentials: this._credentials,
 			})
 				.then(this._checkResponseStatus)
 		}
@@ -67,6 +75,7 @@ class Api {
 		return fetch(`${this._baseURL}/users/me/avatar`, {
 			method: 'PATCH',
 			headers: this._headers,
+			credentials: this._credentials,
 			body: JSON.stringify({
 				avatar: data.avatar
 			})
@@ -89,7 +98,8 @@ const API_CONFIG = {
 	headers: {
 		authorization: '5ae85ff0-6a9f-41ff-87d1-d1c4768e29ea',
 		'Content-Type': 'application/json'
-	}
+	},
+	credentials:'include',
 };
 
 const api = new Api(API_CONFIG);
