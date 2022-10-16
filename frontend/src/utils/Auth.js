@@ -25,11 +25,10 @@ class Auth {
 			.then(this._checkResponseStatus)
 	}
 
-	getContent(jwt) {
+	getContent() {
 		return fetch(`${this._baseURL}/users/me`, {
 			method: 'GET',
 			headers: {
-				"Authorization": `Bearer ${jwt}`,
 				"Content-Type": "application/json",
 			},
 			credentials: this._credentials,

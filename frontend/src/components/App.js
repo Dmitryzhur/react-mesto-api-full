@@ -28,13 +28,8 @@ function App() {
 	const history = useHistory();
 
 	useEffect(() => {
-		tokenCheck();
-	}, [])
-
-	function tokenCheck() {
-		const jwt = localStorage.getItem("jwt");
-		if (jwt) {
-			auth.getContent(jwt)
+		if (isloggedIn) {
+			auth.getContent()
 				.then((data) => {
 					if (data) {
 						setLoggedIn(true);
@@ -47,8 +42,8 @@ function App() {
 				.catch((err) => {
 					console.log(err);
 				})
-		}
-	}
+		};
+	}, [isloggedIn])
 
 	function handleRegisterUser(data) {
 		auth.register(data)
@@ -66,16 +61,11 @@ function App() {
 	function handleLoginUser(data) {
 		auth.authorize(data)
 			.then((res) => {
-				if (res.token) {
-					localStorage.setItem('jwt', res.token);
-					setLoggedIn(true);
-					setUserData({
-						'email': data.email,
-					});
-					history.push('/');
-				} else {
-					return;
-				}
+				setLoggedIn(true);
+				setUserData({
+					'email': data.email,
+				});
+				history.push('/');
 			})
 			.catch((err) => {
 				handlePopupWithoutFormOpen(false);
