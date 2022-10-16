@@ -15,12 +15,12 @@ class Auth {
 			.then(this._checkResponseStatus)
 	}
 
-	authorize({ email, password }) {
+	authorize(data) {
 		return fetch(`${this._baseURL}/signin`, {
 			method: 'POST',
 			headers: this._headers,
 			credentials: this._credentials,
-			body: JSON.stringify({ email, password })
+			body: JSON.stringify(data)
 		})
 			.then(this._checkResponseStatus)
 	}

@@ -22,38 +22,37 @@ function App() {
 	const [currentUser, setCurrentUser] = useState({});
 	const [cards, setCardsList] = useState([]);
 	// const [isLoading, setLoading] = useState(true);
+	const [isAuthorization, setIsAuthorization] = useState(false);
 	const [isPopupWithoutFormOpen, setisPopupWithoutFormOpen] = useState(false);
 	const [isloggedIn, setLoggedIn] = useState(false);
 	const [userData, setUserData] = useState("");
 	const history = useHistory();
 
 	useEffect(() => {
-		if (isloggedIn) {
-			auth.getContent()
-				.then((data) => {
-					if (data) {
-						setLoggedIn(true);
-						setUserData({
-							'email': data.email,
-						});
-						history.push('/');
-					}
-				})
-				.catch((err) => {
-					console.log(err);
-				})
-		};
-	}, [isloggedIn])
+		auth.getContent()
+			.then((data) => {
+				setLoggedIn(true);
+				setUserData({
+					'email': data.email,
+				});
+				history.push('/');
+			})
+			.catch((err) => {
+				history.push("/sign-in");
+				console.log(err);
+			});
+	}, [history])
 
 	function handleRegisterUser(data) {
 		auth.register(data)
 			.then((res) => {
 				handlePopupWithoutFormOpen(true);
-				return res;
+				setIsAuthorization(true);
+				history.push('/');
 			})
-			.then(() => history.push('/sign-in'))
 			.catch((err) => {
 				handlePopupWithoutFormOpen(false);
+				setIsAuthorization(false);
 				console.log(err);
 			})
 	}
@@ -62,6 +61,7 @@ function App() {
 		auth.authorize(data)
 			.then((res) => {
 				setLoggedIn(true);
+				setIsAuthorization(true);
 				setUserData({
 					'email': data.email,
 				});
@@ -69,6 +69,7 @@ function App() {
 			})
 			.catch((err) => {
 				handlePopupWithoutFormOpen(false);
+				setIsAuthorization(false);
 				console.log(err);
 			})
 	}
@@ -84,17 +85,16 @@ function App() {
 	}
 
 	useEffect(() => {
-		if (isloggedIn) {
-			// setLoading(true);
-			Promise.all([api.getUser(), api.getCards()])
-				.then(([userData, initialCards]) => {
-					setCurrentUser(userData);
-					setCardsList(initialCards);
-				})
-				.catch((err) => { console.log(err) })
-			// .finally(() => setLoading(false))
-		}
-	}, [isloggedIn]);
+		// setLoading(true);
+		Promise.all([api.getUser(), api.getCards()])
+			.then(([userData, initialCards]) => {
+				setCurrentUser(userData);
+				setCardsList(initialCards);
+			})
+			.catch((err) => { console.log(err) })
+		// .finally(() => setLoading(false))
+
+	}, [isloggedIn, history]);
 
 	function handleUpdateUser(data) {
 		api.editProfile(data)
@@ -131,7 +131,7 @@ function App() {
 
 	const onCardLike = (card) => {
 		// Снова проверяем, есть ли уже лайк на этой карточке
-		const isLiked = card.likes.some(i => i._id === currentUser._id);
+		const isLiked = card.likes.some(i => i === currentUser._id);
 
 		// Отправляем запрос в API и получаем обновлённые данные карточки
 		api.toggleLike(card._id, isLiked)
