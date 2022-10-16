@@ -48,7 +48,7 @@ function App() {
 			.then((res) => {
 				handlePopupWithoutFormOpen(true);
 				setIsAuthorization(true);
-				history.push('/');
+				history.push('/sign-in');
 			})
 			.catch((err) => {
 				handlePopupWithoutFormOpen(false);
