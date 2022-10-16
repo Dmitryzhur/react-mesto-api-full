@@ -34,14 +34,14 @@ function App() {
 	function tokenCheck() {
 		const jwt = localStorage.getItem("jwt");
 		if (jwt) {
-			auth.getContent(jwt)
+			auth.getContent()
 				.then((data) => {
 					if (data) {
+						setLoggedIn(true);
 						setUserData({
 							'email': data.data.email,
-						})
-						setLoggedIn(true)
-						history.push('/')
+						});
+						history.push('/');
 					}
 				})
 				.catch((err) => {
