@@ -34,12 +34,12 @@ function App() {
 	function tokenCheck() {
 		const jwt = localStorage.getItem("jwt");
 		if (jwt) {
-			auth.getContent()
+			auth.getContent(jwt)
 				.then((data) => {
 					if (data) {
 						setLoggedIn(true);
 						setUserData({
-							'email': data.data.email,
+							'email': data.email,
 						});
 						history.push('/');
 					}
