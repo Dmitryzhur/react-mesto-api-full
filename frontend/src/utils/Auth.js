@@ -36,6 +36,17 @@ class Auth {
 			.then(this._checkResponseStatus)
 	}
 
+	logOut() {
+		return fetch(`${this._baseURL}/logout`, {
+			method: 'POST',
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: this._credentials,
+		})
+			.then(this._checkResponseStatus)
+	}
+
 	_checkResponseStatus(res) {
 		if (res.ok) {
 			return res.json();

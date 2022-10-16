@@ -74,9 +74,14 @@ function App() {
 			})
 	}
 
-	function logOut() {
-		localStorage.setItem('jwt', '');
-		setLoggedIn(false);
+	function handlelogOut() {
+		auth.logOut()
+			.then((res) => {
+				setLoggedIn(false);
+				setUserData(null);
+				history.push('/sign-in');
+		})
+		.catch((err) => console.log(err));
 	}
 
 	function handlePopupWithoutFormOpen(result) {
@@ -192,7 +197,7 @@ function App() {
 						cards={cards}
 						onCardLike={onCardLike}
 						onCardDelete={onCardDelete}
-						onClick={logOut}
+						onClick={handlelogOut}
 					/>
 					<Route path="/sign-in">
 						<Login onLoginUser={handleLoginUser} />
@@ -205,7 +210,9 @@ function App() {
 				<InfoTooltip
 					isOpen={isPopupWithoutFormOpen}
 					onClose={closeAllPopups}
-					answer={isloggedIn} />
+					answer={isloggedIn} 
+					isAuthorization={isAuthorization}
+					/>
 
 				<EditAvatarPopup
 					isOpen={isEditAvatarPopupOpen}
