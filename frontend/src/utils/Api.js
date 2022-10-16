@@ -85,7 +85,7 @@ class Api {
 }
 
 const API_CONFIG = {
-	baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-44',
+	baseUrl: 'https://api.dmitryzhur.students.nomoredomains.icu',
 	headers: {
 		authorization: '5ae85ff0-6a9f-41ff-87d1-d1c4768e29ea',
 		'Content-Type': 'application/json'

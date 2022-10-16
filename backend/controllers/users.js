@@ -15,14 +15,18 @@ const getUser = (req, res, next) => {
 const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
-	  !user // eslint-disable-line
-        ? next(new NotFound('Пользователь не найден'))
-        : res.send(user);
+      if (!user) {
+        next(new NotFound('Пользователь не найден'));
+      } else {
+        res.send(user);
+      }
     })
     .catch((err) => {
-	  err.name === 'CastError' // eslint-disable-line
-        ? next(new BadRequest('Переданы некорректные данные для поиска'))
-        : next(err);
+      if (err.name === 'CastError') {
+        next(new BadRequest('Переданы некорректные данные для поиска'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -30,15 +34,7 @@ const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        throw new ConflictError('Данный email уже существует');
-      } else {
-        return bcrypt.hash(password, 10);
-      }
-    })
-
+  bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name,
       about,
@@ -57,9 +53,13 @@ const createUser = (req, res, next) => {
       res.send(userData);
     })
     .catch((err) => {
-	  err.name === 'ValidationError' // eslint-disable-line
-        ? next(new BadRequest('Переданы некорректные данные при создании пользователя'))
-        : next(err);
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь с данным email уже существует'));
+      } else if (err.name === 'ValidationError') {
+        next(new BadRequest('Переданы некорректные данные при создании пользователя'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -68,10 +68,6 @@ const login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) {
-        next(new NotFound('Неправильные почта или пароль'));
-      }
-
       const token = jwt.sign({ _id: user._id }, process.env.NODE_ENV === 'production' ? process.env.JWT_SECRET : 'secret-code', { expiresIn: '7d' });
       res
         .cookie('access_token', token, {
@@ -94,9 +90,11 @@ const updateUser = (req, res, next) => {
     })
     .then((user) => res.send(user))
     .catch((err) => {
-      err.name === 'ValidationError' // eslint-disable-line
-        ? next(new BadRequest('Переданы некорректные данные при обновлении данных пользователя'))
-        : next(err);
+      if (err.name === 'ValidationError') {
+        next(new BadRequest('Переданы некорректные данные при обновлении аватара'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -112,22 +110,28 @@ const updateAvatar = (req, res, next) => {
     })
     .then((user) => res.send(user))
     .catch((err) => {
-      err.name === 'ValidationError' // eslint-disable-line
-        ? next(new BadRequest('Переданы некорректные данные при обновлении аватара'))
-        : next(err);
+      if (err.name === 'ValidationError') {
+        next(new BadRequest('Переданы некорректные данные при обновлении аватара'));
+      } else {
+        next(err);
+      }
     });
 };
 
 const getCurrentUser = (req, res, next) => User.findById(req.user._id)
   .then((user) => {
-    !user // eslint-disable-line
-      ? next(new NotFound('Пользователь не найден'))
-      : res.status(STATUS_CODE.success).send(user);
+    if (!user) {
+      next(new NotFound('Пользователь не найден'));
+    } else {
+      res.status(STATUS_CODE.success).send(user);
+    }
   })
   .catch((err) => {
-    err.name === 'CastError' // eslint-disable-line
-      ? next(new BadRequest('Переданы некорректные данные при получении данных пользователя'))
-      : next(err);
+    if (err.name === 'CastError') {
+      next(new BadRequest('Переданы некорректные данные для поиска'));
+    } else {
+      next(err);
+    }
   });
 
 module.exports = {

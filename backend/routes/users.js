@@ -1,33 +1,32 @@
-const routesUser = require('express').Router();
+const userRouter = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const { httpRegex } = require('../utils/constants');
 
 const {
-  getUser, getUserById, getCurrentUser, updateUser, updateAvatar, login,
+  getUser, getUserById, getCurrentUser, updateUser, updateAvatar,
 } = require('../controllers/users');
 
-routesUser.get('/users', getUser);
+userRouter.get('/users', getUser);
 
-routesUser.get('/users/me', getCurrentUser);
+userRouter.get('/users/me', getCurrentUser);
 
-routesUser.get('/users/:userId', celebrate({
+userRouter.get('/users/:userId', celebrate({
   params: Joi.object().keys({
     userId: Joi.string().hex().length(24),
   }),
 }), getUserById);
 
-routesUser.post('/users/me', login);
-
-routesUser.patch('/users/me', celebrate({
+userRouter.patch('/users/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(30),
   }),
 }), updateUser);
 
-routesUser.patch('/users/me/avatar', celebrate({
+userRouter.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().regex(/https?:\/\/(\w{3}\.)?[1-9a-z\-.]{1,}\.\w{2,}(\/[1-90a-z-._~:?#[@!$&'()*+,;=]{1,}\/?)?#?/i),
+    avatar: Joi.string().regex(httpRegex),
   }),
 }), updateAvatar);
 
-module.exports = routesUser;
+module.exports = userRouter;

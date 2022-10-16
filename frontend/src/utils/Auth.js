@@ -43,7 +43,7 @@ class Auth {
 }
 
 const AUTH_CONFIG = {
-	baseUrl: 'https://auth.nomoreparties.co',
+	baseUrl: 'https://api.dmitryzhur.students.nomoredomains.icu',
 	headers: {
 		'Content-Type': 'application/json'
 	}
